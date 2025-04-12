@@ -2,16 +2,18 @@ from flask import Flask, request, abort
 from linebot import LineBotApi, WebhookHandler
 from linebot.exceptions import InvalidSignatureError
 from linebot.models import (
-    MessageEvent, TextMessage,
-    JoinEvent, MemberJoinedEvent,
+    MemberJoinedEvent,
     TextSendMessage
 )
-import os
 
 app = Flask(__name__)
 
-line_bot_api = LineBotApi(os.getenv("hXHOaQ65S+r4cpbKmXzrMxbtlphJLA79vsUuFkTFGfsEtBSV3nIVpgzSAZYW6W/WzVLn6Lpo55Ui5yuwr5OevRVTvi3Y9oS6LyHW/J3OBByXTuGG5spPKkDiciZboEblCCXNMwUQpByTEh/ToybGgAdB04t89/1O/w1cDnyilFU="))
-handler = WebhookHandler(os.getenv("0ee3cbdeffb9dd17ffbaec295e369fae"))
+# ✅ ใส่ค่าตรงนี้ได้เลย (แต่ไม่แนะนำสำหรับโปรดักชัน)
+LINE_CHANNEL_ACCESS_TOKEN = "hXHOaQ65S+r4cpbKmXzrMxbtlphJLA79vsUuFkTFGfsEtBSV3nIVpgzSAZYW6W/WzVLn6Lpo55Ui5yuwr5OevRVTvi3Y9oS6LyHW/J3OBByXTuGG5spPKkDiciZboEblCCXNMwUQpByTEh/ToybGgAdB04t89/1O/w1cDnyilFU="
+LINE_CHANNEL_SECRET = "0ee3cbdeffb9dd17ffbaec295e369fae"
+
+line_bot_api = LineBotApi(LINE_CHANNEL_ACCESS_TOKEN)
+handler = WebhookHandler(LINE_CHANNEL_SECRET)
 
 @app.route("/callback", methods=['POST'])
 def callback():
@@ -37,7 +39,7 @@ def handle_member_joined(event):
     except:
         display_name = "เพื่อนใหม่"
 
-    welcome_text = f"สวัสดีครับคุณ {display_name} 🎉\nยินดีต้อนรับสู่กลุ่มของเรา"
+    welcome_text = f"สวัสดีครับคุณ {display_name} 🎉\nยินดีต้อนรับสู่กลุ่มนักสืบบุญตอม SPYPOLICE ครับ"
     line_bot_api.reply_message(
         event.reply_token,
         TextSendMessage(text=welcome_text)
