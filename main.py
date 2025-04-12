@@ -1,13 +1,17 @@
 from flask import Flask, request, abort
 from linebot import LineBotApi, WebhookHandler
 from linebot.exceptions import InvalidSignatureError
-from linebot.models import MessageEvent, TextMessage, TextSendMessage
+from linebot.models import (
+    MessageEvent, TextMessage,
+    JoinEvent, MemberJoinedEvent,
+    TextSendMessage
+)
 import os
 
 app = Flask(__name__)
 
-line_bot_api = LineBotApi(os.getenv("LINE_CHANNEL_ACCESS_TOKEN"))
-handler = WebhookHandler(os.getenv("LINE_CHANNEL_SECRET"))
+line_bot_api = LineBotApi(os.getenv("hXHOaQ65S+r4cpbKmXzrMxbtlphJLA79vsUuFkTFGfsEtBSV3nIVpgzSAZYW6W/WzVLn6Lpo55Ui5yuwr5OevRVTvi3Y9oS6LyHW/J3OBByXTuGG5spPKkDiciZboEblCCXNMwUQpByTEh/ToybGgAdB04t89/1O/w1cDnyilFU="))
+handler = WebhookHandler(os.getenv("0ee3cbdeffb9dd17ffbaec295e369fae"))
 
 @app.route("/callback", methods=['POST'])
 def callback():
@@ -21,28 +25,22 @@ def callback():
 
     return 'OK'
 
-@handler.add(MessageEvent, message=TextMessage)
-def handle_message(event):
-    msg = event.message.text.strip()
-    if msg == "เมนู":
-        reply = "📋 เมนู\n- แจ้งเหตุ\n- แจ้งเวร\n- ติดต่อเจ้าหน้าที่"
-    else:
-        reply = f"คุณพิมพ์ว่า: {msg}"
+# ✅ ต้อนรับเพื่อนใหม่ที่เข้ากลุ่ม
+@handler.add(MemberJoinedEvent)
+def handle_member_joined(event):
+    new_member = event.joined.members[0]
+    user_id = new_member.user_id
+
+    try:
+        profile = line_bot_api.get_profile(user_id)
+        display_name = profile.display_name
+    except:
+        display_name = "เพื่อนใหม่"
+
+    welcome_text = f"สวัสดีครับคุณ {display_name} 🎉\nยินดีต้อนรับสู่กลุ่มของเรา"
     line_bot_api.reply_message(
         event.reply_token,
-        TextSendMessage(text=reply)
-    )
-elif msg == "ส่งรูป":
-    image_url = "https://drive.google.com/file/d/0ByZ8Hukn1W5_UWdvTmtYbEJLNTQ/view?usp=sharing&resourcekey=0-c18u5rbMyoDuerIP9L9J0A"  # เปลี่ยนลิงก์รูปตรงนี้
-    line_bot_api.reply_message(
-        event.reply_token,
-        [
-            TextSendMessage(text="📸 นี่คือภาพที่คุณร้องขอ"),
-            ImageSendMessage(
-                original_content_url=image_url,
-                preview_image_url=image_url
-            )
-        ]
+        TextSendMessage(text=welcome_text)
     )
 
 if __name__ == "__main__":
