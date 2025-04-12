@@ -25,23 +25,22 @@ def callback():
 
     return 'OK'
 
-# ✅ ต้อนรับเพื่อนใหม่ที่เข้ากลุ่ม
+# ✅ ต้อนรับสมาชิกใหม่ พร้อมแสดงชื่อ
 @handler.add(MemberJoinedEvent)
-def handle_member_joined(event):
-    new_member = event.joined.members[0]
-    user_id = new_member.user_id
+def welcome_new_member(event):
+    for member in event.joined.members:
+        user_id = member.user_id
+        try:
+            profile = line_bot_api.get_profile(user_id)
+            display_name = profile.display_name
+        except:
+            display_name = "เพื่อนใหม่"
 
-    try:
-        profile = line_bot_api.get_profile(user_id)
-        display_name = profile.display_name
-    except:
-        display_name = "เพื่อนใหม่"
-
-    welcome_text = f"สวัสดีครับคุณ {display_name} 🎉\nยินดีต้อนรับสู่กลุ่มของเรา"
-    line_bot_api.reply_message(
-        event.reply_token,
-        TextSendMessage(text=welcome_text)
-    )
+        message = f"🎉 ยินดีต้อนรับคุณ {display_name} เข้าสู่กลุ่ม SPYPOLICE นักสืบบุญตอมครับ!"
+        line_bot_api.reply_message(
+            event.reply_token,
+            TextSendMessage(text=message)
+        )
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=10000)
