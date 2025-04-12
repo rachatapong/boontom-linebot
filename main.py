@@ -32,6 +32,18 @@ def handle_message(event):
         event.reply_token,
         TextSendMessage(text=reply)
     )
+elif msg == "ส่งรูป":
+    image_url = "https://www.example.com/your-image.jpg"  # เปลี่ยนลิงก์รูปตรงนี้
+    line_bot_api.reply_message(
+        event.reply_token,
+        [
+            TextSendMessage(text="📸 นี่คือภาพที่คุณร้องขอ"),
+            ImageSendMessage(
+                original_content_url=image_url,
+                preview_image_url=image_url
+            )
+        ]
+    )
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=10000)
