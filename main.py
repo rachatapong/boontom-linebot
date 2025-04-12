@@ -34,7 +34,7 @@ def welcome_new_member(event):
             profile = line_bot_api.get_profile(user_id)
             display_name = profile.display_name
         except:
-            display_name = "เพื่อนใหม่"
+            display_name = "display_name"
 
         message = f"🎉 ยินดีต้อนรับคุณ {display_name} เข้าสู่กลุ่ม SPYPOLICE นักสืบบุญตอมครับ!"
         line_bot_api.reply_message(
