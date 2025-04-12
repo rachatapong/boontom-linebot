@@ -1,7 +1,11 @@
 from flask import Flask, request, abort
 from linebot import LineBotApi, WebhookHandler
 from linebot.exceptions import InvalidSignatureError
-from linebot.models import MessageEvent, TextMessage, TextSendMessage
+from linebot.models import (
+    MessageEvent, TextMessage,
+    JoinEvent, MemberJoinedEvent,
+    TextSendMessage
+)
 import os
 
 app = Flask(__name__)
@@ -21,16 +25,22 @@ def callback():
 
     return 'OK'
 
-@handler.add(MessageEvent, message=TextMessage)
-def handle_message(event):
-    msg = event.message.text.strip()
-    if msg == "เมนู":
-        reply = "📋 เมนู\n- แจ้งเหตุ\n- แจ้งเวร\n- ติดต่อเจ้าหน้าที่"
-    else:
-        reply = f"คุณพิมพ์ว่า: {msg}"
+# ✅ ต้อนรับเพื่อนใหม่ที่เข้ากลุ่ม
+@handler.add(MemberJoinedEvent)
+def handle_member_joined(event):
+    new_member = event.joined.members[0]
+    user_id = new_member.user_id
+
+    try:
+        profile = line_bot_api.get_profile(user_id)
+        display_name = profile.display_name
+    except:
+        display_name = "เพื่อนใหม่"
+
+    welcome_text = f"สวัสดีครับคุณ {display_name} 🎉\nยินดีต้อนรับสู่กลุ่มของเรา"
     line_bot_api.reply_message(
         event.reply_token,
-        TextSendMessage(text=reply)
+        TextSendMessage(text=welcome_text)
     )
 
 if __name__ == "__main__":
