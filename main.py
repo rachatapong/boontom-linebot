@@ -33,7 +33,7 @@ def handle_message(event):
         TextSendMessage(text=reply)
     )
 elif msg == "ส่งรูป":
-    image_url = "https://www.example.com/your-image.jpg"  # เปลี่ยนลิงก์รูปตรงนี้
+    image_url = "https://drive.google.com/file/d/0ByZ8Hukn1W5_UWdvTmtYbEJLNTQ/view?usp=sharing&resourcekey=0-c18u5rbMyoDuerIP9L9J0A"  # เปลี่ยนลิงก์รูปตรงนี้
     line_bot_api.reply_message(
         event.reply_token,
         [
