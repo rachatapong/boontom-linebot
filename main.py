@@ -15,9 +15,9 @@ LINE_CHANNEL_SECRET = "0ee3cbdeffb9dd17ffbaec295e369fae"
 line_bot_api = LineBotApi(LINE_CHANNEL_ACCESS_TOKEN)
 handler = WebhookHandler(LINE_CHANNEL_SECRET)
 
-@app.route("/callback", methods=['POST'])
+@app.route("/callback", methods=["POST"])
 def callback():
-    signature = request.headers['X-Line-Signature']
+    signature = request.headers["X-Line-Signature"]
     body = request.get_data(as_text=True)
 
     try:
@@ -25,7 +25,7 @@ def callback():
     except InvalidSignatureError:
         abort(400)
 
-    return 'OK'
+    return "OK"
 
 # ✅ ต้อนรับสมาชิกใหม่เท่านั้น
 @handler.add(MemberJoinedEvent)
